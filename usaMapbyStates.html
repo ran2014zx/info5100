@@ -1,0 +1,160 @@
+
+<html>
+<head>
+	<link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
+<!-- Load the d3 library. -->
+<script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+<script src="http://d3js.org/topojson.v1.min.js"></script>
+<style>
+body { font-family: "Open Sans"; } div { margin: 30px; }
+svg { border: solid black 1px; }
+/* The default styles for axis elements stink. What should they be? */
+.axis path {}
+.axis line {}
+</style>
+</head>
+<body>
+<div id="map"></div>
+
+<script>
+
+var width = 960,
+    height = 500;
+
+var projection = d3.geo.albersUsa();
+
+var path = d3.geo.path().projection(projection);
+
+
+var svg = d3.select("#map").append("svg")
+    .attr("width", width)
+    .attr("height", height);
+
+var g = svg.append("g");
+
+var usData;
+
+var bar = svg.append("rect")
+				 .attr("x", 10)
+				 .attr("y", 200)
+				 .attr("width", 20)
+				 .attr("height",15)
+				 .style("fill","#ffeda0");
+var bar2 = svg.append("rect")
+				 .attr("x", 10)
+				 .attr("y", 215)
+				 .attr("width", 20)
+				 .attr("height",15)
+				 .style("fill","#feb24c");
+var bar3 = svg.append("rect")
+				 .attr("x", 10)
+				 .attr("y", 230)
+				 .attr("width", 20)
+				 .attr("height",15)
+				 .style("fill","#7fcdbb");
+var bar4 = svg.append("rect")
+				 .attr("x", 10)
+				 .attr("y", 245)
+				 .attr("width", 20)
+				 .attr("height",15)
+				 .style("fill","#2c7fb8");
+var bar5 = svg.append("rect")
+				 .attr("x", 10)
+				 .attr("y", 260)
+				 .attr("width", 20)
+				 .attr("height",15)
+				 .style("fill","#dd1c77");
+
+text = svg.append("text").text("<50")
+          .attr("x",10)
+          .attr("y",210)
+          .attr("fill","black")
+          .style("font-size","10px");
+
+		
+d3.json("us.json", function(error, us) {
+	usData = us;
+
+	var states = topojson.feature(us, us.objects.states).features;
+	
+	g.selectAll("path")
+		.data(states)
+		.enter().append("path")
+		.attr("d", path)
+		.style("fill", "white")
+		.style("stroke", "#888");
+
+
+
+	var ny = projection([-73.9385, 40.6643]);
+	var la = projection([-118.4108, 34.0194]);
+	var chicago = projection([-87.6818, 41.8376]);
+	var houston = projection([-95.38, 29.78]);
+	var phila = projection([-75.1333, 40]);
+	var phoenix = projection([-112.08, 33.57]);
+	var sanAntonio = projection([-98.5251, 29.47]);
+	var sanDiego = projection([-117.13, 32.81]);
+	var dallas = projection([-96.79, 32.7]);
+	var sanJose = projection([-121.81, 37.2969]);
+	var austin = projection([-97.7560, 30.3072]);
+	var indianapolis = projection([-86.14, 39.77]);
+	var jacksonville = projection([-81.66, 30.33]);
+	var sanFrancisco = projection([-122.42, 37.7]);
+	var columbus = projection([-82.99, 39.99]);
+	var charlotte = projection([-80.83, 35.20]);
+	var detroit = projection([-83.10, 42.38]);
+	var elPaso = projection([-106.43, 31.85]);
+	var memphis = projection([-89.98, 35.10]);
+	var seattle = projection([-122.35, 47.62]);
+	var denver = projection([-104.88, 39.76]);
+	var dc = projection([-77.02, 38.90]);
+	var boston = projection([-71.02, 42.33]);
+	var nashville = projection([-86.78, 36.17]);
+	var baltimore = projection([-76.61, 39.30]);
+	var oklahoma = projection([-97.51, 35.4671]);
+	var louisville = projection([-85, 38]);
+	var portland = projection([-122.65, 45.53]);
+	var lv = projection([-115.26, 36.22]);
+	var milwaukee = projection([-87.96, 43.06]);
+
+
+	var cityList=[ny,la,chicago,houston,phila,phoenix,sanAntonio,sanDiego,dallas,sanJose,austin,indianapolis,jacksonville,sanFrancisco,columbus,charlotte,detroit,elPaso,memphis,seattle,denver,dc,boston,nashville,baltimore,oklahoma,louisville,portland,lv,milwaukee];
+
+	var cityArea = [841,388,272,220,155,151,141,136,126,100,89,84,84,83,82,80,69,67,65,65,65,65,65,63,62,61,61,61,60,60];
+
+	
+	for (var j=0;j<30;j++){
+		for (var k=0; k<30; k++){
+			if(j!=k){
+
+
+			var lineData=[{"x":cityList[j][0],"y":cityList[j][1]},{"x":(cityList[j][0]+cityList[k][0])/2,"y":(cityList[j][1]+cityList[k][1])/2+10},{"x":cityList[k][0],"y":cityList[k][1]}];
+
+			var lineFunction = d3.svg.line().x(function(d){return d.x;})
+									.y(function(d){return d.y;})
+									.interpolate("basis");
+									
+    		var lineGraph=svg.append("path").attr("d",lineFunction(lineData))
+    								.attr("stroke","blue")
+    								.attr("stroke-width",.5)
+    								.attr("fill","none");
+    		}
+		}
+		
+	}
+
+	for (var i=0; i<30;i++){
+		var r = Math.log(cityArea[i])*1.5;
+		svg.append("circle").attr("cx",cityList[i][0]).attr("cy",cityList[i][1]).attr("r",r).style("fill","pink");
+
+
+	}
+	
+
+});
+
+
+</script>
+
+</body>
+</html>
